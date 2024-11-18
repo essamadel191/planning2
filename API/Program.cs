@@ -16,6 +16,9 @@ builder.Services.AddDbContext<StoreContext>(opt =>
 // Others like AddTransient is effectivily scoped to the method level not the request level
 builder.Services.AddScoped<IProductRepository,ProdcutRepository>();
 
+
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 //builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
@@ -36,5 +39,14 @@ var app = builder.Build();
 //app.UseAuthorization();
 
 app.MapControllers();
+
+try
+{
+    using var scope = app.Services.CreateScope();
+}
+catch (System.Exception)
+{
+    throw;
+}
 
 app.Run();
