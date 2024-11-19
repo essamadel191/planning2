@@ -43,6 +43,13 @@ app.MapControllers();
 try
 {
     using var scope = app.Services.CreateScope();
+    var service = scope.ServiceProvider;
+    var context = service.GetRequiredService<StoreContext>();
+
+    // It will create new database if there are no
+    // And it will seed the data to the new database
+    await context.Database.MigrateAsync();
+    await StoreContextSeed.SeedAsync(context);
 }
 catch (System.Exception)
 {
