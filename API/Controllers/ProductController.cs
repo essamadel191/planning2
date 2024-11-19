@@ -12,9 +12,10 @@ namespace API.Controllers
         // ActionResults Allow Us to return HTTP responses
         // IEnumerable Type of List of Type Prodcut
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Products>>> GetProducts()
+        public async Task<ActionResult<IReadOnlyList<Products>>> GetProducts(string? brand,
+            string? type,string? sort)
         {
-            return Ok(await repo.GetProductAsync());
+            return Ok(await repo.GetProductAsync(brand,type,sort));
         }
 
         // For Specific Product
@@ -81,6 +82,18 @@ namespace API.Controllers
             }
 
             return BadRequest("Problem deleting the product");
+        }
+
+        [HttpGet("Brands")]
+        public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
+        {
+            return Ok(await repo.GetBrandsAsync());
+        }  
+
+        [HttpGet("Types")]
+        public async Task<ActionResult<IReadOnlyList<string>>> GetTypes()
+        {
+            return Ok(await repo.GetTypesAsync());
         }
 
         private bool ProductExists(int id)

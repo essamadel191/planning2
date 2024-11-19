@@ -50,9 +50,12 @@ try
     // And it will seed the data to the new database
     await context.Database.MigrateAsync();
     await StoreContextSeed.SeedAsync(context);
+
+    
 }
-catch (System.Exception)
-{
+catch (Exception ex)
+{   
+    Console.WriteLine(ex);
     throw;
 }
 
