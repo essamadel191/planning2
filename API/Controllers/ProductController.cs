@@ -1,12 +1,13 @@
 using Core.Entities;
 using Core.Interfaces;
+using Core.Specfications;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController(IProductRepository repo) : ControllerBase
+    public class ProductsController(IGenericRepository<Products> repo) : ControllerBase
     {
 
         // ActionResults Allow Us to return HTTP responses
@@ -15,14 +16,17 @@ namespace API.Controllers
         public async Task<ActionResult<IReadOnlyList<Products>>> GetProducts(string? brand,
             string? type,string? sort)
         {
-            return Ok(await repo.GetProductAsync(brand,type,sort));
+            var spec = new ProductSpecification(brand,type);
+            var products = await repo.ListAsync(spec);
+
+            return Ok(products);
         }
 
         // For Specific Product
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Products>> GetProduct(int id)
         {
-            var Product = await repo.GetProductByIdAsync(id);
+            var Product = await repo.GetByIdAsync(id);
 
             // Definsive Check for the product
             if(Product == null) return NotFound();
@@ -34,9 +38,9 @@ namespace API.Controllers
         public async Task<ActionResult<Products>> CreateProduct(Products product)
         {
 
-            repo.Addproduct(product);
+            repo.Add(product);
 
-            if(await repo.SaveChangesAsync()) 
+            if(await repo.SaveAllAsync()) 
             {
                 return CreatedAtAction("GetProduct", new {id = product.Id},product); 
             }
@@ -53,9 +57,9 @@ namespace API.Controllers
 
             // This tell the entity framework tracker that we're passing in here is 
             // an entity effectivily abd has been modified
-            repo.UpdateProduct(product);
+            repo.Update(product);
 
-            if(await repo.SaveChangesAsync())
+            if(await repo.SaveAllAsync())
             {
                 return NoContent();
             }
@@ -66,17 +70,17 @@ namespace API.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
-            var product = await repo.GetProductByIdAsync(id);
+            var product = await repo.GetByIdAsync(id);
 
             if (product == null) return NotFound("This Product of id : "+id+" is not found");
 
             // This mean that dotnet is tracking this product
-            repo.DeleteProduct(product);
+            repo.Remove(product);
 
             // Then Update the database 
-            await repo.SaveChangesAsync();
+            await repo.SaveAllAsync();
 
-            if(await repo.SaveChangesAsync())
+            if(await repo.SaveAllAsync())
             {
                 return NoContent();
             }
@@ -87,18 +91,22 @@ namespace API.Controllers
         [HttpGet("Brands")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
         {
-            return Ok(await repo.GetBrandsAsync());
+            /// TODO Implement Method 
+
+            return Ok();
         }  
 
         [HttpGet("Types")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetTypes()
         {
-            return Ok(await repo.GetTypesAsync());
+            /// TODO Implement Method
+
+            return Ok();
         }
 
         private bool ProductExists(int id)
         {
-            return repo.ProductExists(id);
+            return repo.Exists(id);
         }
     }
 }

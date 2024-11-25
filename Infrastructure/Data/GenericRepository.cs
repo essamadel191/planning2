@@ -7,16 +7,10 @@ namespace Infrastructure.Data;
 
 public class GenericRepository<T>(StoreContext context) : IGenericRepository<T> where T : BaseEntity
 {
+    
     private readonly StoreContext context = context;
 
-    public async Task<T?> GetByIdAsync(int id)
-    {
-        return await context.Set<T>().FindAsync(id);
-    }
-    public async Task<IReadOnlyList<T>> ListAllAsync()
-    {
-        return await context.Set<T>().ToListAsync();
-    }
+    //***************** Basic Functions *****************//
     public void Add(T entity)
     {
         context.Set<T>().Add(entity);    
@@ -30,6 +24,16 @@ public class GenericRepository<T>(StoreContext context) : IGenericRepository<T> 
     {
         context.Set<T>().Remove(entity);    
     }
+    //**********************************************//
+    public async Task<T?> GetByIdAsync(int id)
+    {
+        return await context.Set<T>().FindAsync(id);
+    }
+    public async Task<IReadOnlyList<T>> ListAllAsync()
+    {
+        return await context.Set<T>().ToListAsync();
+    }
+    
     public async Task<bool> SaveAllAsync()
     {
         return await context.SaveChangesAsync() > 0; 
@@ -37,6 +41,21 @@ public class GenericRepository<T>(StoreContext context) : IGenericRepository<T> 
     public bool Exists(int id)
     {
         return context.Set<T>().Any(x => x.Id == id);
+    }
+
+    public async Task<T?> GetEntityWithSpec(ISpecfication<T> spec)
+    {
+        return await ApplySpecification(spec).FirstOrDefaultAsync();
+    }
+
+    public async Task<IReadOnlyList<T>> ListAsync(ISpecfication<T> spec)
+    {
+        return await ApplySpecification(spec).ToListAsync();
+    }
+
+    private IQueryable<T> ApplySpecification(ISpecfication <T> spec)
+    {
+        return SpecificationEvaluator<T>.GetQuery(context.Set<T>().AsQueryable(),spec);
     }
 
 }
