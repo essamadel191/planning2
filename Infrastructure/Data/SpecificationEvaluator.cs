@@ -6,12 +6,24 @@ namespace Infrastructure.Data;
 
 public class SpecificationEvaluator<T> where T : BaseEntity
 {
-    public static IQueryable<T> GetQuery(IQueryable<T> query, ISpecfication<T> spec)
+    public static IQueryable<T> GetQuery(IQueryable<T> query, ISpecification<T> spec)
     {
         if(spec.Criteria != null)
         {
             query = query.Where(spec.Criteria); // x => x.Brand == brand
         }
+
+        if (spec.OrdetBy != null)
+        {
+            query = query.OrderBy(spec.OrdetBy);
+        }
+        if (spec.OrdetByDescending != null)
+        {
+            query = query.OrderByDescending(spec.OrdetByDescending);
+        }
+        
+
         return query;
     }
+
 }

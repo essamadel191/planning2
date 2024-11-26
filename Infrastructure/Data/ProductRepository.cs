@@ -49,7 +49,7 @@ public class ProdcutRepository(StoreContext context) : IProductRepository
             "proceDesc" => query.OrderByDescending(x => x.Price),
             _ => query.OrderBy(x => x.Name)
         };
-    
+        
         
         return await query.ToListAsync();
     }
