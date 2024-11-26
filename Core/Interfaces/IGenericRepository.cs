@@ -11,10 +11,13 @@ namespace Core.Interfaces
         // It would be optional as it would be for individual item
         Task<T?> GetEntityWithSpec(ISpecification<T> spec);
         Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec); 
+        // Another version of the metheods but with different in and out ()
+        Task<TResult?> GetEntityWithSpec<TResult>(ISpecification<T, TResult> spec);
+        Task<IReadOnlyList<TResult>> ListAsync<TResult>(ISpecification<T, TResult> spec); 
+        Task<bool> SaveAllAsync();
         void Add(T entity);
         void Update(T entity);
         void Remove(T entity);
-        Task<bool> SaveAllAsync();
         bool Exists(int id);
     }
 }

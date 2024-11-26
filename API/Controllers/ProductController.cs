@@ -1,6 +1,6 @@
 using Core.Entities;
 using Core.Interfaces;
-using Core.Specfications;
+using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -91,17 +91,17 @@ namespace API.Controllers
         [HttpGet("Brands")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
         {
-            /// TODO Implement Method 
+            var spec = new BrandListSpecification();
 
-            return Ok();
+            return Ok(await repo.ListAsync(spec));
         }  
 
         [HttpGet("Types")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetTypes()
         {
-            /// TODO Implement Method
+            var spec = new TypeListSpecification();
 
-            return Ok();
+            return Ok(await repo.ListAsync(spec));
         }
 
         private bool ProductExists(int id)

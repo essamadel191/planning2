@@ -1,9 +1,9 @@
 using System;
 using Core.Entities;
 
-namespace Core.Specfications;
+namespace Core.Specifications;
 
-public class ProductSpecification : BaseSpecfication<Products>
+public class ProductSpecification : BaseSpecification<Products>
 {
     public ProductSpecification(string? brand, string? type, string? sort) : base(x => 
     
